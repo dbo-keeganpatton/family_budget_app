@@ -21,6 +21,9 @@ viz_data = df.melt(id_vars=["Title"], var_name='Month', value_name='Value')
 viz_data['Value'] = pd.to_numeric(viz_data['Value'])
 month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
+barchart_df = df.drop(columns=['Title']).sum().reset_index()
+barchart_df.columns = ['Month', 'Total']
+
 
 
 # Slicer Filters
@@ -99,40 +102,108 @@ def main():
     
 
     
+    ##############################
+    #       Curr Month Viz       #
+    ##############################
+    cur1, cur2, cur3 = st.columns(3)
 
-    ######################
-    #     Bill Line      #
-    ######################
-    filtered_viz_data = viz_data[viz_data['Title'].isin(selected_categories)]
-    st.vega_lite_chart(
-        filtered_viz_data,
-        {
-            "mark" : "line",
-            "encoding" : {
-                
-                "x" : {
-                    "field":"Month", 
-                    "type":"ordinal",
-                    "sort" : month_list,
-                    "axis" :{"labelFontSize":18, "labelAngle":-30, "title":False}
-                
+    with cur1:
+        with st.container(height=300):
+            st.write("Current Month Bills Paid Pie Chart")
+
+    with cur2:
+        with st.container(height=300):
+            st.write("Current Savings Goal")
+
+    with cur3:
+        with st.container(height=300):
+            st.write("Current Debt to be Paid")
+
+
+
+    ##############################
+    #      Seond Row Viz's       #
+    ##############################
+    viz1, viz2 = st.columns(2)
+
+    
+    
+    with viz1:
+        with st.container(height=400):
+        ######################
+        #     Bill Line      #
+        ######################
+            filtered_viz_data = viz_data[viz_data['Title'].isin(selected_categories)]
+            st.vega_lite_chart(
+                filtered_viz_data,
+                {
+                    "height": 360,
+                    "mark" : "line",
+                    "encoding" : {
+                        
+                        "x" : {
+                            "field":"Month", 
+                            "type":"ordinal",
+                            "sort" : month_list,
+                            "axis" :{"labelFontSize":16, "labelAngle":-30, "title":False}
+                        
+                        },
+
+                        "y" : {
+                            "field":"Value", 
+                            "type":"quantitative",
+                            "axis" :{"labelFontSize":16, "title":False, "grid":False}
+                        },
+                        
+                        "color" : {
+                            "field" : "Title", 
+                            "type" : "nominal",
+                            "legend" : {"orient":"top", "title":False, "labelFontSize":16}
+                        },
+                        
+
+                    }
+
                 },
 
-                "y" : {
-                    "field":"Value", 
-                    "type":"quantitative",
-                    "axis" :{"labelFontSize":18, "title":False}
+                use_container_width=True
+            )
+
+   
+
+
+    with viz2:
+        ##########################
+        #       Bar Chart        #
+        ##########################
+        with st.container(height=400):
+            st.vega_lite_chart(
+                barchart_df,
+                {
+                    "height": 380,
+                    "mark" : {"type":"bar", "cornerRadiusEnd":4},
+                    "encoding" : {
+                       
+                        "y" : {
+                            "field":"Month",
+                            "sort" : month_list,
+                            "axis" :{"labelFontSize":16, "title":False, "grid":False}
+                        },
+
+                        "x" : {
+                            "aggregate":"sum",
+                            "field":"Total",
+                            "axis":{"labelFontSize":16, "title":False, "grid":False}
+                        },
+
+                        "color" : {"value":"#7DEFA1"}
+                            
+                    }
                 },
-                
-                "color" : {"field" : "Title", "type" : "nominal"}
-            }
-        },
 
-        use_container_width=True
-    )
+                use_container_width=True
+            )
 
-    st.write(df)
-    st.write(viz_data)
     
 
 
