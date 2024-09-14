@@ -1,5 +1,8 @@
 # Budget Streamlit App
 
+![sample_image](./images/Screenshot from 2024-09-14 15-08-13.png)
+
+
 ## Why?
 Visualization and UI constraints in source data within Google Sheets.
 
@@ -13,7 +16,7 @@ Visualization and UI constraints in source data within Google Sheets.
 | Visualization    | [vega-lite](https://vega.github.io/)   |
 
 
-##ToDo
+## ToDo
 - Metric Cards
     - Negative Conditional Formatting not working
     - Remove '-' symbol for negative values
