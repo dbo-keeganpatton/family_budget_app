@@ -13,3 +13,19 @@ Visualization and UI constraints in source data within Google Sheets.
 | Visualization    | [vega-lite](https://vega.github.io/)   |
 
 
+##ToDo
+- Metric Cards
+    - Negative Conditional Formatting not working
+    - Remove '-' symbol for negative values
+
+- Debt Donut Chart
+    - Aggregate all payments toward debt across all sheets
+
+- Sidebar
+    - Payment Widget for ELT
+
+- Authentication
+    - Login
+
+
+

@@ -1,7 +1,7 @@
 import gspread
 import pandas as pd
 import streamlit as st
-
+pd.set_option('future.no_silent_downcasting', True)
 
 
 # Authenticate using the svc account and get period data...
@@ -16,7 +16,57 @@ df.replace('', 0, inplace=True)
 
 
 
-# Stage for viz     
+# This will be for getting the most current month for ELT...
+# And current month tracking.
+curr_month_data = sh.worksheets()
+curr_mnt = curr_month_data[-2]
+
+curr_data = curr_mnt.get("B15:F39")
+curr_df = pd.DataFrame(curr_data)
+curr_df.columns = curr_df.iloc[0]
+curr_df = curr_df.drop(0).reset_index(drop=True)
+curr_df['Value'] = pd.to_numeric(curr_df['Value'].dropna())
+
+curr_paid_df = curr_df[curr_df['Paid']=='TRUE']
+
+
+# These values will be used for a donut chart that shows...
+# How close we are to paying all bills in the current month.
+bills_paid_denom = curr_df['Value'].sum().round(2)
+bills_paid_numer = curr_paid_df['Value'].sum().round(2)
+
+
+bills_paid = pd.DataFrame({
+    'paid':[bills_paid_numer],
+    "denominator":[bills_paid_denom]
+})
+
+
+bills_paid['unpaid'] = bills_paid_denom - bills_paid_numer
+
+bills_paid_chart_data = pd.DataFrame({
+    'category': ['paid', 'unpaid'],
+    'value' : [bills_paid['paid'][0], bills_paid['unpaid'][0]]
+})
+
+
+
+# Savings Donut chart Stage data 
+savings_df = curr_df[curr_df['Bill']=='Minimum Savings']
+savings_val = savings_df['Value'].sum()
+savings_goal = 1000
+savings_df = pd.DataFrame({"saved":[savings_val], "goal":[savings_goal]})
+
+savings_chart_data = pd.DataFrame({
+    'category': ['saved', 'goal'],
+    'value' : [savings_df['saved'][0], savings_df['goal'][0]]
+})
+
+
+
+
+
+# Stage for Bar and Line viz     
 viz_data = df.melt(id_vars=["Title"], var_name='Month', value_name='Value')
 viz_data['Value'] = pd.to_numeric(viz_data['Value'])
 month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -39,10 +89,11 @@ electric_avg = df.iloc[6, 1:].mean().round(2)
 grocery_avg = df.iloc[2, 1:].mean().round(2)
 water_avg = df.iloc[10, 1:].mean().round(2)
 
-flex_spend_current_month = df.iloc[23, -1:].max().round(2)
-electric_current_month = df.iloc[6, -1:].max().round(2)
-grocery_current_month = df.iloc[2, -1:].max().round(2)
-water_current_month = df.iloc[10, -1:].max().round(2)
+flex_spend_current_month = df.iloc[23, -1:].max()
+electric_current_month = df.iloc[6, -1:].max()
+grocery_current_month = df.iloc[2, -1:].max()
+water_current_month = df.iloc[10, -1:].max()
+
 
 
 def find_percent_variance(curr_val, past_val):
@@ -67,7 +118,7 @@ custom_css = """
     <style>
     /* Positive */
     div[data-testid="stMetricDelta"] div:first-child {
-        color: red !important;  
+        color: #C02F35 !important;  
         font-size: 24px !important;
     }
     
@@ -86,7 +137,7 @@ custom_css = """
 def main():
    
 
-
+    
 
     # This if for the st.metric() custom coloring. 
     st.markdown(custom_css, unsafe_allow_html=True)
@@ -132,11 +183,67 @@ def main():
 
     with cur1:
         with st.container(height=300):
-            st.write("Current Month Bills Paid Pie Chart")
+            st.vega_lite_chart(
+                bills_paid_chart_data,
+                {
+                    "height": 250,
+                    "width": 250,
+                    "mark": {"type":"arc", "innerRadius":60},
+                    "encoding": {
+                        "theta": {"field":"value", "type":"quantitative"},
+                        "color": {
+                            "field":"category", 
+                            "type":"nominal",
+                            "scale": {
+                                    "domain":["paid", "unpaid"],
+                                    "range":["#7DEFA1", "#C02F35"]
+                                },
+                            "legend" : False 
+                        }
+                    },
+
+                    "title": {
+                        "text": "Current Month Bills Paid",  
+                        "fontSize": 30,  
+                        "anchor": "middle",  
+                    }
+
+                },
+                use_container_width=True
+            )
+
 
     with cur2:
         with st.container(height=300):
-            st.write("Current Savings Goal")
+            st.vega_lite_chart(
+                savings_chart_data,
+                {
+                    "height": 250,
+                    "width": 250,
+                    "mark": {"type":"arc", "innerRadius":60},
+                    "encoding": {
+                        "theta": {"field":"value", "type":"quantitative"},
+                        "color": {
+                            "field":"category", 
+                            "type":"nominal",
+                            "scale": {
+                                    "domain":["saved", "goal"],
+                                    "range":["#7DEFA1", "#C02F35"]
+                                },
+                            "legend" : False 
+                        }
+                    },
+
+                    "title": {
+                        "text": "Monthly Savings Goal",  
+                        "fontSize": 30,  
+                        "anchor": "middle",  
+                    }
+
+                },
+                use_container_width=True
+            )
+
 
     with cur3:
         with st.container(height=300):
@@ -181,10 +288,16 @@ def main():
                         "color" : {
                             "field" : "Title", 
                             "type" : "nominal",
-                            "legend" : {"orient":"top", "title":False, "labelFontSize":16}
+                            "legend" : {"orient":"bottom", "title":False, "labelFontSize":16}
                         },
                         
 
+                    },
+                    
+                    "title": {
+                        "text": "Expense Trends",  
+                        "fontSize": 30,  
+                        "anchor": "middle",  
                     }
 
                 },
@@ -221,6 +334,12 @@ def main():
 
                         "color" : {"value":"#7DEFA1"}
                             
+                    },
+
+                    "title": {
+                        "text": "Monthly Spending",  
+                        "fontSize": 30,  
+                        "anchor": "middle",  
                     }
                 },
 
