@@ -1,6 +1,6 @@
 # Budget Streamlit App
 
-![sample_image](./images/Screenshot from 2024-09-14 15-08-13.png)
+![sample_image](./images/sample.png)
 
 
 ## Why?
