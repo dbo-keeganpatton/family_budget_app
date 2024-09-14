@@ -60,29 +60,52 @@ grocery_current_month_var = find_percent_variance(grocery_current_month, grocery
 water_current_month_var = find_percent_variance(water_current_month, water_avg )
 
 
+# I do not like the standard colors for st.metric() indicators..
+# They are not aligned with my theme and this is to overide them.
+# I can not figure out how to affect the arrows so only the values will be colored
+custom_css = """
+    <style>
+    /* Positive */
+    div[data-testid="stMetricDelta"] div:first-child {
+        color: red !important;  
+        font-size: 24px !important;
+    }
+    
+    /* Negative */
+    div[data-testid="stMetricDelta"] div:nth-child(2) {
+        color: #7DEFA1 !important; 
+        font-size: 24px !important;
+    }
+    </style>
+    """
+
 
 ######################
 #     Streamlit      #
 ######################
 def main():
-    
+   
 
+
+
+    # This if for the st.metric() custom coloring. 
+    st.markdown(custom_css, unsafe_allow_html=True)
     #####################
     #     KPI CARDS     #
     #####################
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        st.metric(value=grocery_avg, label="Avg Grocery", delta=grocery_current_month_var, delta_color='inverse')
+        st.metric(value=grocery_avg, label="Avg Grocery", delta=grocery_current_month_var, delta_color='off')
 
     with col2:
-        st.metric(value=electric_avg, label="Avg Electric", delta=electric_curr_month_var, delta_color='inverse')
+        st.metric(value=electric_avg, label="Avg Electric", delta=electric_curr_month_var, delta_color='off')
     
     with col3:
-        st.metric(value=water_avg, label="Avg Water", delta=water_current_month_var, delta_color='inverse')
+        st.metric(value=water_avg, label="Avg Water", delta=water_current_month_var, delta_color='off')
 
     with col4:
-        st.metric(value=flex_spend_avg, label="Avg Flex Spend", delta=flex_spend_current_month_var, delta_color='inverse')
+        st.metric(value=flex_spend_avg, label="Avg Flex Spend", delta=flex_spend_current_month_var, delta_color='off')
    
 
     st.write("____________________")
@@ -184,16 +207,16 @@ def main():
                     "mark" : {"type":"bar", "cornerRadiusEnd":4},
                     "encoding" : {
                        
-                        "y" : {
+                        "x" : {
                             "field":"Month",
                             "sort" : month_list,
-                            "axis" :{"labelFontSize":16, "title":False, "grid":False}
+                            "axis" :{"labelFontSize":16, "labelAngle":0, "title":False, "grid":False}
                         },
 
-                        "x" : {
+                        "y" : {
                             "aggregate":"sum",
                             "field":"Total",
-                            "axis":{"labelFontSize":16, "title":False, "grid":False}
+                            "axis":{"labelFontSize":16,  "title":False, "grid":False}
                         },
 
                         "color" : {"value":"#7DEFA1"}
