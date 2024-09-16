@@ -13,7 +13,7 @@ from data.transform import transformData
 # All Data used in main app can be sourced from transform.py
 # They are transformed to fit visuals in this file and returned as
 # themselves by the function 'transformData()'
-df, bills_paid_chart_data, savings_chart_data, viz_data, barchart_df = transformData()   
+df, bills_paid_chart_data, savings_chart_data, viz_data = transformData()   
 month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 
@@ -173,8 +173,7 @@ def main():
         #       Bar Chart    #
         ######################
         with st.container(height=400):
-            filterd_barchart_data = barchart_df[barchart_df['Month'].isin(selected_months)]
-            monthlySpendingBarchart(data=filterd_barchart_data, sort=month_list) 
+            monthlySpendingBarchart(data=filtered_viz_data, sort=month_list) 
     
 
 

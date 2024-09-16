@@ -1,7 +1,6 @@
 import pandas as pd
 from .source import source_data
 
-
 # sourc_data UDF just returns the two dataframes ['df', 'curr_df']
 # df is the data for historical data
 # curr_df is data for current month data.
@@ -51,11 +50,14 @@ def transformData(df=df, curr_df=curr_df):
     viz_data = df.melt(id_vars=["Title"], var_name='Month', value_name='Value')
     viz_data['Value'] = pd.to_numeric(viz_data['Value'])
 
-    barchart_df = df.drop(columns=['Title']).sum().reset_index()
-    barchart_df.columns = ['Month', 'Total']
-
+    # Removing this dataframe for now. Olivia asked for a stacked bar chart for monthly aggregates.
+    # If I require this type of summarization later on I will keep this here for that.
+    """
+    total_expenses_df = df.drop(columns=['Title']).sum().reset_index()
+    total_expenses_df.columns = ['Month', 'Total']
+    """
     
-    return df, bills_paid_chart_data, savings_chart_data, viz_data, barchart_df
+    return df, bills_paid_chart_data, savings_chart_data, viz_data
 
 
 

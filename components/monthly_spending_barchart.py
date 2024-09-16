@@ -19,12 +19,16 @@ def monthlySpendingBarchart(data, sort):
 
                 "y" : {
                     "aggregate":"sum",
-                    "field":"Total",
+                    "field":"Value",
                     "axis":{"labelFontSize":16,  "title":False, "grid":False}
                 },
+                
+                "color" : {
+                    "field" : "Title", 
+                    "type" : "nominal",
+                    "legend" : {"orient":"bottom", "title":False, "labelFontSize":16}
+                },
 
-                "color" : {"value":"#7DEFA1"}
-                    
             },
 
             "title": {
