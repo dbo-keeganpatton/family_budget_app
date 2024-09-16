@@ -2,7 +2,6 @@
 
 ![sample_image](./images/sample.png)
 
-
 ## Why?
 Visualization and UI constraints in source data within Google Sheets.
 
@@ -20,9 +19,6 @@ Visualization and UI constraints in source data within Google Sheets.
 - Metric Cards
     - Negative Conditional Formatting not working
     - Remove '-' symbol for negative values
-
-- Debt Donut Chart
-    - Aggregate all payments toward debt across all sheets
 
 - Sidebar
     - Payment Widget for ELT
