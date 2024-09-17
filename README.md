@@ -16,9 +16,9 @@ Visualization and UI constraints in source data within Google Sheets.
 
 
 ## ToDo
-- Metric Cards
-    - Negative Conditional Formatting not working
-    - Remove '-' symbol for negative values
+~~- Metric Cards~~
+    ~~- Negative Conditional Formatting not working~~
+    ~~- Remove '-' symbol for negative values~~
 
 - Sidebar
     - Payment Widget for ELT
