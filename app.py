@@ -59,7 +59,7 @@ def find_percent_variance(curr_val, past_val):
     '''Just Calculates a variance'''
     var = curr_val - past_val
     diff = ((var / past_val) * 100).round(1)
-    val = f"{diff}%"
+    val = diff
     return val
 
 flex_spend_current_month_var = find_percent_variance(flex_spend_current_month, flex_spend_avg)
@@ -67,31 +67,6 @@ electric_curr_month_var = find_percent_variance(electric_current_month, electric
 grocery_current_month_var = find_percent_variance(grocery_current_month, grocery_avg)
 water_current_month_var = find_percent_variance(water_current_month, water_avg )
 
-
-
-##################################
-#    Custom CSS Staging Area     #
-##################################
-
-# I do not like the standard colors for st.metric() indicators..
-# They are not aligned with my theme and this is to overide them.
-# I can not figure out how to affect the arrows so only the values will be colored.
-# For now this is the only custom styles I am injecting, this may grow as functionality does.
-custom_css = """
-    <style>
-    /* Positive */
-    div[data-testid="stMetricDelta"] div:first-child {
-        color: #C02F35 !important;  
-        font-size: 24px !important;
-    }
-    
-    /* Negative */
-    div[data-testid="stMetricDelta"] div:nth-child(2) {
-        color: #7DEFA1 !important; 
-        font-size: 24px !important;
-    }
-    </style>
-    """
 
 
 
@@ -102,7 +77,7 @@ def main():
     
 
     # This if for the st.metric() custom coloring. 
-    st.markdown(custom_css, unsafe_allow_html=True)
+#    st.markdown(custom_css, unsafe_allow_html=True)
 
     #####################
     #     KPI CARDS     #
