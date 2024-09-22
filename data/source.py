@@ -1,5 +1,8 @@
 import gspread
 import pandas as pd
+import os
+import json
+import base64
 pd.set_option('future.no_silent_downcasting', True)
 
 
@@ -14,7 +17,13 @@ def source_data():
     
     # IMPORTANT!! Since the app is executed from the project root, the secret path for GCP
     # must be set to route from that location.
-    secret = './data/secrets/secret.json'
+    # secret = './data/secrets/secret.json'
+    
+    gcp_service_account = os.getenv('GCP_SERVICE_ACCOUNT')
+    if gcp_service_account:
+        gcp_service_account_json = base64.b64decode(gcp_service_account).decode('utf-8')
+        secret = json.loads(gcp_service_account_json)
+
     gc = gspread.service_account(filename=secret)
     sh = gc.open('Budget')
     ws = sh.worksheet('Dashboard Data')

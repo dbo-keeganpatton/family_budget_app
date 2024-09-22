@@ -3,6 +3,9 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
+import base64
+import os
+
 
 st.set_page_config(
     page_title="Patton Family Budget",
@@ -14,13 +17,22 @@ st.set_page_config(
 
 
 
-
 ##################################
 #           Login Prompt        #
 ##################################
 
-with open('./auth.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+# with open('./auth.yaml') as file:
+#    config = yaml.load(file, Loader=SafeLoader)
+
+login_credentials = os.getenv('LOGIN_CREDENTIALS')
+
+if login_credentials:
+    login_credentials_yaml = base64.b64decode(login_credentials).decode('utf-8')
+
+    config = yaml.load(login_credentials_yaml, Loader=SafeLoader)
+else:
+    raise ValueError("LOGIN_CREDENTIALS environment variable is not set.")
+
 
 authenticator = stauth.Authenticate(
     config['credentials'],
