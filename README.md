@@ -16,15 +16,21 @@ Visualization and UI constraints in source data within Google Sheets.
 
 
 ## ToDo
+- Sidebar
+    - Payment Widget for ELT
+
+- Detail Pages
+    - tabular detail views for each visual as redirects
+
+- Backend Migration
+    - transition to SQLite database
+
 - ~~Metric Cards~~
     - ~~Negative Conditional Formatting not working~~
     - ~~Remove '-' symbol for negative values~~
 
-- Sidebar
-    - Payment Widget for ELT
-
-- Authentication
-    - Login
+- ~~Authentication~~
+    - ~~Login~~
 
 
 
