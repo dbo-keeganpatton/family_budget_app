@@ -1,7 +1,10 @@
 import gspread
 import pandas as pd
+import json
 import os
 pd.set_option('future.no_silent_downcasting', True)
+from google.oauth2.service_account import Credentials
+
 
 
 def source_data():
@@ -18,7 +21,8 @@ def source_data():
     # secret = './data/secrets/secret.json'
     
     secret = os.getenv('GCP_SERVICE_ACCOUNT')
-    gc = gspread.service_account(filename=secret)
+    gcp_credentials_dict = json.loads(secret)
+    gc = gspread.service_account_from_dict(gcp_credentials_dict)
     sh = gc.open('Budget')
     ws = sh.worksheet('Dashboard Data')
     db_data = ws.get_all_records()
