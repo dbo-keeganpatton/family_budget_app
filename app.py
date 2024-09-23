@@ -25,7 +25,7 @@ st.set_page_config(
 
 login_credentials = os.getenv('LOGIN_CREDENTIALS')
 
-config = yaml.load(login_credentials, Loader=SafeLoader)
+config = yaml.safe_load(login_credentials)
 
 
 authenticator = stauth.Authenticate(
