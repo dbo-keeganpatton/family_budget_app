@@ -20,13 +20,12 @@ st.set_page_config(
 #           Login Prompt        #
 ##################################
 
-# with open('./auth.yaml') as file:
+#with open('./auth.yaml') as file:
 #    config = yaml.load(file, Loader=SafeLoader)
 
-login_credentials = os.getenv('LOGIN_CREDENTIALS')
+log_cred = os.environ("LOGIN_CREDENTIALS")
 
-config = yaml.safe_load(login_credentials.strip())
-
+config = yaml.load(log_cred, Loader=SafeLoader)
 
 authenticator = stauth.Authenticate(
     config['credentials'],
