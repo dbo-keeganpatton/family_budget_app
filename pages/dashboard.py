@@ -1,3 +1,4 @@
+import os
 import yaml
 import pandas as pd
 import streamlit as st
@@ -28,8 +29,14 @@ if 'authentication_status' not in st.session_state or not st.session_state['auth
     st.info('Please Login from the Home page and try again.')
     st.switch_page("./app.py")
 
-with open('./auth.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+#with open('./auth.yaml') as file:
+#    config = yaml.load(file, Loader=SafeLoader)
+#
+
+log_cred = os.environ.get("LOGIN_CREDENTIALS")
+
+config = yaml.load(log_cred, Loader=SafeLoader)
+
 
 authenticator = stauth.Authenticate(
     config['credentials'],
