@@ -1,5 +1,5 @@
 import gspread
-from gspread.auth import service_account
+from gspread.auth import service_account, service_account_from_dict
 import pandas as pd
 import json
 import os
@@ -22,15 +22,14 @@ def source_data():
     # secret = './data/secrets/secret.json'
     
     # Use this for PROD auth
-    # secret = os.getenv('GCP_SERVICE_ACCOUNT')
-    # gc = gspread.service_account_from_dict(gcp_credentials_dict)
+    secret = os.getenv('GCP_SERVICE_ACCOUNT')
+    gcp_credentials_dict = json.loads(secret)
     
     # Use this for DEV auth
-    secret_path = './data/secrets/secret.json'
-    with open(secret_path, 'r') as f:
-        secret = f.read()
-
-    gcp_credentials_dict = json.loads(secret)
+#    secret_path = './data/secrets/secret.json'
+#    with open(secret_path, 'r') as f:
+#        secret = f.read()
+#
     
     gc = gspread.service_account_from_dict(gcp_credentials_dict)
     sh = gc.open('Budget')
