@@ -16,6 +16,9 @@ Visualization and UI constraints in source data within Google Sheets.
 
 
 ## ToDo
+- Fix Deployment
+    - config.toml does not take affect, this needs to be fixed
+
 - Sidebar
     - Payment Widget for ELT
 
