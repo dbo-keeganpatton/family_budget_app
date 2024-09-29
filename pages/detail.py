@@ -1,5 +1,9 @@
+import yaml
 import streamlit as st
+from yaml.loader import SafeLoader
 from data.source import source_data
+import streamlit_authenticator as stauth
+
 
 
 st.set_page_config(
@@ -9,7 +13,56 @@ st.set_page_config(
     menu_items=None
 )
 
+
+
+##################################
+#         Login Check            #
+##################################
+
+if 'authentication_status' not in st.session_state or not st.session_state['authentication_status']:
+    st.info('Please Login from the Home page and try again.')
+    st.switch_page("./app.py")
+
+# Use this for DEV auth
+with open('./auth.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+
+# Use this for PROD Auth
+# log_cred = os.environ.get("LOGIN_CREDENTIALS")
+# config = yaml.load(log_cred, Loader=SafeLoader)
+
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
+
+
+
+
+
 df, curr_df = source_data()
+
+
+with st.sidebar:
+    with st.container(border=True):
+        st.page_link(
+            "./pages/dashboard.py", 
+            label="Return to Dashboard", 
+            icon="📈", 
+            use_container_width=True
+        )
+        
+
+    st.write("________________")
+
+    # Logout button
+    authenticator.logout()
+
 
 
 curr_df['Paid'] = ["Yes" if i == "TRUE" else "" for i in curr_df["Paid"]]

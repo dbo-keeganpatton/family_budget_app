@@ -131,8 +131,17 @@ def main():
     ######################
     with st.sidebar:
        
-        # Logout button
-        authenticator.logout()
+
+        # Detail Page Link
+        with st.container(border=True):
+
+            st.page_link(
+                './pages/detail.py',
+                label="View Raw Data",
+                icon="🗂️",
+                use_container_width=True
+            )
+
 
         st.title('Category')
         selected_categories = st.multiselect(
@@ -154,7 +163,13 @@ def main():
             default=[i for i in month_filter],
             label_visibility='collapsed'
         )
-    
+        
+        
+        st.write("______________")
+
+        # Logout button
+        authenticator.logout()
+
 
     ##############################
     #       Curr Month Viz       #
