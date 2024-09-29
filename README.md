@@ -19,11 +19,11 @@ Visualization and UI constraints in source data within Google Sheets.
 - Sidebar
     - Payment Widget for ELT
 
-- Detail Pages
-    - tabular detail views for each visual as redirects
-
 - Backend Migration
     - transition to SQLite database
+
+- ~~Detail Pages~~
+    - ~~tabular detail views for each visual as redirects~~
 
 - ~~Metric Cards~~
     - ~~Negative Conditional Formatting not working~~
