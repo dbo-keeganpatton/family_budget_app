@@ -25,13 +25,13 @@ if 'authentication_status' not in st.session_state or not st.session_state['auth
     st.switch_page("./app.py")
 
 ## Use this for DEV auth
-#with open('./auth.yaml') as file:
-#    config = yaml.load(file, Loader=SafeLoader)
-#
+with open('./auth.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
 
 # Use this for PROD Auth
-log_cred = os.environ.get("LOGIN_CREDENTIALS")
-config = yaml.load(log_cred, Loader=SafeLoader)
+# log_cred = os.environ.get("LOGIN_CREDENTIALS")
+# config = yaml.load(log_cred, Loader=SafeLoader)
 
 
 authenticator = stauth.Authenticate(
