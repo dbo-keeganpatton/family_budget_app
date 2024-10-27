@@ -14,6 +14,8 @@ st.set_page_config(
 )
 
 
+# Explicitly invoke config toml for deployement
+os.environ["STREAMLIT_CONFIG_DIR"] = "./.streamlit"
 
 
 ##################################

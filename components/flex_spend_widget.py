@@ -68,8 +68,10 @@ def input_form():
                         st.session_state['flex_spend_formula'] = None
                         st.session_state['flex_charge'] = ""
                         st.rerun()  # Rerun to clear the form and state
+
             else:
                 st.error("Wrong row selected in Update.py for Flex Spend")
+
 
 if __name__ == "__main__":
     input_form()
