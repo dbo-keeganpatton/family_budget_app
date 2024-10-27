@@ -17,13 +17,17 @@ gcp_credentials_dict = json.loads(secret)
     
 
 
-
-
-
 gc = gspread.auth.service_account_from_dict(gcp_credentials_dict)
 sh = gc.open('Budget')
 curr_month_data = sh.worksheets()
 curr_mnt = curr_month_data[-2]
+
+
+# Session Variables Initialization
+st.session_state.setdefault('submitted', False)
+st.session_state.setdefault('confirmation', False)
+st.session_state.setdefault('flex_spend_formula', None)
+
 
 # Session Variables
 if 'submitted' not in st.session_state:
