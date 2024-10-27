@@ -9,6 +9,7 @@ from components.expense_trend_line_chart import expenseLineChart
 from components.monthly_savings import monthlySavingsDonut
 from components.bill_paid_donut import billsPaidDonut
 from components.kpi_cards import kpiCards
+from components.flex_spend_widget import input_form
 from data.transform import transformData
 import streamlit_authenticator as stauth
 
@@ -29,14 +30,14 @@ if 'authentication_status' not in st.session_state or not st.session_state['auth
     st.info('Please Login from the Home page and try again.')
     st.switch_page("./app.py")
 
-## Use this for DEV auth
-with open('./auth.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
-
+### Use this for DEV auth
+#with open('./auth.yaml') as file:
+#    config = yaml.load(file, Loader=SafeLoader)
+#
 
  # Use this for PROD Auth
- # log_cred = os.environ.get("LOGIN_CREDENTIALS")
- # config = yaml.load(log_cred, Loader=SafeLoader)
+log_cred = os.environ.get("LOGIN_CREDENTIALS")
+config = yaml.load(log_cred, Loader=SafeLoader)
 
 
 authenticator = stauth.Authenticate(
@@ -165,6 +166,12 @@ def main():
         )
         
         
+        st.write("______________")
+        
+        # Flex Spend add Widget
+        input_form()
+
+
         st.write("______________")
 
         # Logout button
