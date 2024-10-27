@@ -16,11 +16,13 @@ Visualization and UI constraints in source data within Google Sheets.
 
 
 ## ToDo
-- Fix Deployment
-    - config.toml does not take affect, this needs to be fixed
-
 - Sidebar
-    - Payment Widget for ELT
+    - Improve Widget to be dict based on category
+    - Widget Data Validation
+    - ~~Payment Widget for ELT~~
+
+- ~~Fix Deployment~~
+    - ~~config.toml does not take affect, this needs to be fixed~~
 
 - Backend Migration
     - transition to SQLite database
