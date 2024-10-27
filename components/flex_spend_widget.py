@@ -21,13 +21,14 @@ sh = gc.open('Budget')
 curr_month_data = sh.worksheets()
 curr_mnt = curr_month_data[-2]
 
-# Session Variables Initialization
-st.session_state.setdefault('submitted', False)
-st.session_state.setdefault('confirmation', False)
-st.session_state.setdefault('flex_spend_formula', None)
-
 # Input Form
 def input_form():
+
+    # Session Variables Initialization
+    st.session_state.setdefault('submitted', False)
+    st.session_state.setdefault('confirmation', False)
+    st.session_state.setdefault('flex_spend_formula', None)
+
     with st.form("Add Payment or Charge", clear_on_submit=True):
         st.subheader("Add Flex Charge")
         
@@ -66,7 +67,7 @@ def input_form():
                         st.session_state['confirmation'] = False
                         st.session_state['flex_spend_formula'] = None
                         st.session_state['flex_charge'] = ""
-                        st.experimental_rerun()  # Rerun to clear the form and state
+                        st.rerun()  # Rerun to clear the form and state
             else:
                 st.error("Wrong row selected in Update.py for Flex Spend")
 
