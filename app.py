@@ -22,13 +22,14 @@ os.environ["STREAMLIT_CONFIG_DIR"] = "./.streamlit"
 #           Login Prompt        #
 ##################################
 
-#with open('./auth.yaml') as file:
-#    config = yaml.load(file, Loader=SafeLoader)
-#
+# DEV Auth
+with open('./auth.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
 
-log_cred = os.environ.get("LOGIN_CREDENTIALS")
 
-config = yaml.load(log_cred, Loader=SafeLoader)
+# PROD Auth
+#log_cred = os.environ.get("LOGIN_CREDENTIALS")
+#config = yaml.load(log_cred, Loader=SafeLoader)
 
 authenticator = stauth.Authenticate(
     config['credentials'],
