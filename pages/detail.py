@@ -2,7 +2,7 @@ import os
 import yaml
 import streamlit as st
 from yaml.loader import SafeLoader
-from data.source import source_data
+from data.source import all_data
 import streamlit_authenticator as stauth
 
 
@@ -28,12 +28,6 @@ if 'authentication_status' not in st.session_state or not st.session_state['auth
 with open('./auth.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-
-# Use this for PROD Auth
-#log_cred = os.environ.get("LOGIN_CREDENTIALS")
-#config = yaml.load(log_cred, Loader=SafeLoader)
-#
-
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -46,7 +40,7 @@ authenticator = stauth.Authenticate(
 
 
 
-df, curr_df = source_data()
+df, curr_df, bills_paid_chart_data, savings_chart_data, viz_data = all_data()
 
 
 with st.sidebar:
@@ -65,10 +59,9 @@ with st.sidebar:
     authenticator.logout()
 
 
-
-curr_df['Paid'] = ["Yes" if i == "TRUE" else "" for i in curr_df["Paid"]]
-curr_df['Priority'] = ["Yes" if i == "TRUE" else "" for i in curr_df["Priority"]]
-curr_df['Value'] = ["" if i == None or i == 0 else i for i in curr_df["Value"]]
+curr_df['paid'] = ["Yes" if i == True else "" for i in curr_df["paid"]]
+curr_df['priority'] = ["Yes" if i == True else "" for i in curr_df["priority"]]
+curr_df['value'] = ["" if i == None or i == 0 else i for i in curr_df["value"]]
 
 
 # There is some reaaally not great stuff here for formatting...

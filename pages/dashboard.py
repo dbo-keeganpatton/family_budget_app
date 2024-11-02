@@ -2,6 +2,8 @@ import os
 import yaml
 import pandas as pd
 import streamlit as st
+import sqlalchemy as sa
+import psycopg2
 from yaml.loader import SafeLoader
 pd.set_option('future.no_silent_downcasting', True)
 from components.monthly_spending_barchart import monthlySpendingBarchart
@@ -10,7 +12,7 @@ from components.monthly_savings import monthlySavingsDonut
 from components.bill_paid_donut import billsPaidDonut
 from components.kpi_cards import kpiCards
 from components.flex_spend_widget import input_form
-from data.transform import transformData
+from data.source import all_data
 import streamlit_authenticator as stauth
 
 st.set_page_config(
@@ -19,6 +21,9 @@ st.set_page_config(
     layout='wide',
     menu_items=None
 )
+
+conn = st.connection("postgresql", type='sql')
+payments = conn.query("select * from fact_payment")
 
 
 
@@ -35,11 +40,6 @@ with open('./auth.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
 
- # Use this for PROD Auth
-#log_cred = os.environ.get("LOGIN_CREDENTIALS")
-#config = yaml.load(log_cred, Loader=SafeLoader)
-#
-
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -53,7 +53,7 @@ authenticator = stauth.Authenticate(
 # All Data used in main app can be sourced from transform.py
 # They are transformed to fit visuals in this file and returned as
 # themselves by the function 'transformData()'
-df, bills_paid_chart_data, savings_chart_data, viz_data = transformData()   
+df, curr_df, bills_paid_chart_data, savings_chart_data, viz_data = all_data()   
 month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 
@@ -65,48 +65,51 @@ month_list = ["January", "February", "March", "April", "May", "June", "July", "A
 # I change the array to a set just so it can be only unique values.
 # Default list is so the user can only start with a few bill types displayed, to reduce clutter.
 month_filter_list = []
-for i in df.columns:
-    if i != 'Title':
-        month_filter_list.append(i)
-    else:
-        pass
+for i in df['month']:
+    month_filter_list.append(i)
+
+
 
 month_filter = set(month_filter_list)
-default_list = ['Groceries ', 'Electric', 'Water', 'Gas', 'Baby Food']
-bill_list = viz_data['Title'].unique()
-
+default_list = ['groceries', 'electric', 'water', 'gas', 'baby']
+bill_list = viz_data['expense'].unique()
 
 
 ##################################
 #  KPI Metric Card Data Staging  #
 ##################################
+def get_avg(df, expense_name):
 
-# .loc ["Row Number", "Column to start from":]
-# Display will be current average from all data, and the indicator will 
-# show the variance of our current months value for that category compared to the average.
-flex_spend_avg = df.iloc[23, 1:].mean().round(2)
-electric_avg = df.iloc[6, 1:].mean().round(2)
-grocery_avg = df.iloc[2, 1:].mean().round(2)
-water_avg = df.iloc[10, 1:].mean().round(2)
+    result = df[df['expense'] == expense_name].groupby('expense')['value'].mean()
+    return round(float(result.squeeze()), 0) if not result.empty else 0.0
 
-flex_spend_current_month = df.iloc[23, -1:].max()
-electric_current_month = df.iloc[6, -1:].max()
-grocery_current_month = df.iloc[2, -1:].max()
-water_current_month = df.iloc[10, -1:].max()
+
+flex_spend_avg = get_avg(df, "flex_spend")
+electric_avg = get_avg(df, "electric")
+grocery_avg = get_avg(df, "groceries")
+water_avg = get_avg(df, "water")
+
+
+flex_spend_current_month = get_avg(curr_df, "flex_spend")
+electric_current_month = get_avg(curr_df, "electric")
+grocery_current_month = get_avg(curr_df, "groceries")
+water_current_month = get_avg(curr_df, "water")
+
 
 def find_percent_variance(curr_val, past_val):
     '''Just Calculates a variance'''
+    
+    if past_val == 0:  
+        return 0.0 if curr_val == 0 else float('inf')
     var = curr_val - past_val
-    diff = ((var / past_val) * 100).round(1)
-    val = diff
-    return val
+    diff = (var / past_val) * 100
+    return round(diff, 0)
+
 
 flex_spend_current_month_var = find_percent_variance(flex_spend_current_month, flex_spend_avg)
 electric_curr_month_var = find_percent_variance(electric_current_month, electric_avg)
 grocery_current_month_var = find_percent_variance(grocery_current_month, grocery_avg)
 water_current_month_var = find_percent_variance(water_current_month, water_avg )
-
-
 
 
 ######################################
@@ -182,7 +185,7 @@ def main():
     #       Curr Month Viz       #
     ##############################
     cur1, cur2 = st.columns(2)
-
+    
     with cur1:
         billsPaidDonut(data=bills_paid_chart_data, height=300)
         
@@ -194,13 +197,13 @@ def main():
     #      Seond Row Viz's       #
     ##############################
     viz1, viz2 = st.columns(2)
-    
+     
     with viz1:
         with st.container(height=400):
             ######################
             #     Bill Line      #
             ######################
-            filtered_viz_data = viz_data[viz_data['Month'].isin(selected_months) & viz_data['Title'].isin(selected_categories)]  
+            filtered_viz_data = viz_data[viz_data['month'].isin(selected_months) & viz_data['expense'].isin(selected_categories)]  
             expenseLineChart(data=filtered_viz_data, sort=month_list) 
 
     with viz2:

@@ -1,9 +1,3 @@
-import sqlite3 as sql
-
-conn = sql.connect("database.db")
-cur = conn.cursor()
-
-
 dim_calendar_schema = """
 CREATE TABLE dim_calendar (
     year_month_id INTEGER PRIMARY KEY,

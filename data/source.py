@@ -1,62 +1,90 @@
-import gspread
-from gspread.auth import service_account, service_account_from_dict
 import pandas as pd
-import json
-import os
+import streamlit as st
+import psycopg2
 pd.set_option('future.no_silent_downcasting', True)
-from google.oauth2.service_account import Credentials
 
 
-
-def source_data():
+def all_data():
     
+    # Database Connection
+    conn = st.connection("postgresql", type='sql')
 
     ####################################
     #         Trend Data Pull          #
     ####################################
-    # Source data is located on a specific page where data is aggregated across all months.
-    # This will be used for trend visuals and KPI cards.
-    
-    # IMPORTANT!! Since the app is executed from the project root, the secret path for GCP
-    # must be set to route from that location.
-    # secret = './data/secrets/secret.json'
-    
-    # Use this for PROD auth
-#    secret = os.getenv('GCP_SERVICE_ACCOUNT')
-#    gcp_credentials_dict = json.loads(secret)
-#    
-    # Use this for DEV auth
-    secret_path = './data/secrets/secret.json'
-    with open(secret_path, 'r') as f:
-        secret = f.read()
-        gcp_credentials_dict = json.loads(secret)
+    trend = conn.query("select month, expense, value from fact_payment")
+    df = pd.DataFrame(trend)
 
-    
-    gc = gspread.service_account_from_dict(gcp_credentials_dict)
-    sh = gc.open('Budget')
-    ws = sh.worksheet('Dashboard Data')
-    db_data = ws.get_all_records()
-    df = pd.DataFrame(db_data)
-    df.replace('', 0, inplace=True)
-    
 
     ####################################
     #    Current Month Data Pull       #
     ####################################
-    # Current month data should always be the last sheet in the index of the workbook.
-    # For not it is the second to last, this will change after 12/01/2024.
+    curr = conn.query("""
+        select 
+        pa.month, 
+        pa.expense, 
+        pa.value, 
+        pa.paid , 
+        de.priority 
+        from fact_payment as pa
+        left join dim_expense as de 
+            on de.expense  = pa.expense 
+        where year_month_id = ( select max(year_month_id) from fact_payment)
+        """)
+
+    curr_df = pd.DataFrame(curr)
+
+
+    #########################################
+    #       Donut Charts Data Staging       #   
+    #########################################
+
+    # These values will be used for a donut chart that shows
+    # How close we are to paying all bills in the current month.
+    # For the vega donut charts, it is important that a dataframe with two columns,
+    # labeled 'category' and 'value' be used. 
+    # Here we stage a boolean 'category' of whether bills are marked as Paid or Unpaid.
+    # The value for both is then assigned.
+    curr_paid = conn.query("""
+    select 
+    month, expense, value, paid 
+    from fact_payment
+    where 
+    year_month_id = ( select max(year_month_id) from fact_payment )
+    and paid = true
+    """)    
+    curr_paid_df = pd.DataFrame(curr_paid)
+
+
+    bills_paid_denom = curr_df['value'].sum().round(2)
+    bills_paid_numer = curr_paid_df['value'].sum().round(2)
+    bills_paid = pd.DataFrame({ 'paid':[bills_paid_numer], "denominator":[bills_paid_denom] })
+    bills_paid['unpaid'] = bills_paid_denom - bills_paid_numer
+    bills_paid_chart_data = pd.DataFrame({ 'category': ['paid', 'unpaid'], 'value' : [bills_paid['paid'][0], bills_paid['unpaid'][0]] })
+
+
+    # Same rules as above apply regarding vega-lite donut chart configuration.
+    # Goal is static 1000 currently.
+    savings_goal = 1000
+    savings_df = curr_df[curr_df['expense']=='Minimum Savings']
+    savings_val = savings_df['value'].sum()
+    savings_df = pd.DataFrame({"saved":[savings_val], "goal":[savings_goal]})
+    savings_chart_data = pd.DataFrame({ 'category': ['saved', 'goal'], 'value' : [savings_df['saved'][0], savings_df['goal'][0]] })
+
+
+
+    #########################################
+    #       Trend Charts Data Staging       #   
+    #########################################
+
+    # Data is pivoted to assist with summarization.
+    # viz_data is for the line chart.
+    # barchart_df is for the bar chart.
+    viz_data = df.copy()
+    viz_data['value'] = pd.to_numeric(viz_data['value'])
+
     
-    curr_month_data = sh.worksheets()
-    curr_mnt = curr_month_data[-2]
-    curr_data = curr_mnt.get("B15:F39")
-    curr_df = pd.DataFrame(curr_data)
-    curr_df.columns = curr_df.iloc[0]
-    curr_df = curr_df.drop(0).reset_index(drop=True)
-    curr_df['Value'] = pd.to_numeric(curr_df['Value'].dropna())
-
-
-    return df, curr_df
-
+    return df, curr_df, bills_paid_chart_data, savings_chart_data, viz_data
 
 if __name__ == "__main__":
-    source_data()
+    all_data()
