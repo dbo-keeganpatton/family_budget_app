@@ -56,8 +56,8 @@ def all_data():
     curr_paid_df = pd.DataFrame(curr_paid)
 
 
-    bills_paid_denom = curr_df['value'].sum().round(2)
-    bills_paid_numer = curr_paid_df['value'].sum().round(2)
+    bills_paid_denom = curr_df['value'].sum()
+    bills_paid_numer = curr_paid_df['value'].sum()
     bills_paid = pd.DataFrame({ 'paid':[bills_paid_numer], "denominator":[bills_paid_denom] })
     bills_paid['unpaid'] = bills_paid_denom - bills_paid_numer
     bills_paid_chart_data = pd.DataFrame({ 'category': ['paid', 'unpaid'], 'value' : [bills_paid['paid'][0], bills_paid['unpaid'][0]] })

@@ -5,17 +5,6 @@ import streamlit as st
 import gspread
 import json
 
-# DEV Auth 
-secret_path = './data/secrets/secret.json'
-with open(secret_path, 'r') as f:
-    secret = f.read()
-    gcp_credentials_dict = json.loads(secret)
-
-
-# PROD Auth
-#secret = os.getenv('GCP_SERVICE_ACCOUNT')
-#gcp_credentials_dict = json.loads(secret)
-
 gc = gspread.auth.service_account_from_dict(gcp_credentials_dict)
 sh = gc.open('Budget')
 curr_month_data = sh.worksheets()
