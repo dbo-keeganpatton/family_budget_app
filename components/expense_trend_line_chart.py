@@ -10,7 +10,7 @@ def expenseLineChart(data, sort):
             "encoding" : {
                 
                 "x" : {
-                    "field":"Month", 
+                    "field":"month", 
                     "type":"ordinal",
                     "sort" : sort,
                     "axis" :{"labelFontSize":16, "labelAngle":-30, "title":False}
@@ -18,13 +18,13 @@ def expenseLineChart(data, sort):
                 },
 
                 "y" : {
-                    "field":"Value", 
+                    "field":"value", 
                     "type":"quantitative",
                     "axis" :{"labelFontSize":16, "title":False, "grid":False}
                 },
                 
                 "color" : {
-                    "field" : "Title", 
+                    "field" : "expense", 
                     "type" : "nominal",
                     "legend" : {"orient":"bottom", "title":False, "labelFontSize":16}
                 },

@@ -3,3 +3,6 @@
 *.yaml
 yaml_base64.txt
 secret_base64.txt
+**.db
+**secrets.toml
+**.csv
