@@ -1,3 +1,7 @@
+####################################
+#        SCHEMA QUERIES            #
+####################################
+
 dim_calendar_schema = """
 CREATE TABLE dim_calendar (
     year_month_id INTEGER PRIMARY KEY,
@@ -34,6 +38,10 @@ ADD COLUMN current_ind BOOLEAN
 """
 
 
+#####################################
+#        Stored Procedures          #
+#####################################
+
 populate_new_month = """
 CREATE OR REPLACE FUNCTION public.populate_new_month_fact_payment()
  RETURNS void
@@ -66,6 +74,20 @@ END;
 $function$;
 """
 
+####################################
+#          ELT Actions             #
+####################################
+add_expense = """
+
+UPDATE fact_payment
+SET value = :value,
+	paid = TRUE
+WHERE 
+	expense = :expense and 
+	month = :month and
+	mod(year_month_id / 100, 10000) = :year;
+
+"""
 
 
 

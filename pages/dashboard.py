@@ -1,30 +1,22 @@
-import os
 import yaml
+import psycopg2
 import pandas as pd
 import streamlit as st
 import sqlalchemy as sa
-import psycopg2
 from yaml.loader import SafeLoader
+import streamlit_authenticator as stauth
 pd.set_option('future.no_silent_downcasting', True)
+from components.update_expense_db_widget import submit_updated_payment
 from components.monthly_spending_barchart import monthlySpendingBarchart
 from components.expense_trend_line_chart import expenseLineChart
 from components.monthly_savings import monthlySavingsDonut
 from components.bill_paid_donut import billsPaidDonut
 from components.kpi_cards import kpiCards
-from components.flex_spend_widget import input_form
 from data.source import all_data
-import streamlit_authenticator as stauth
 
-st.set_page_config(
-    page_title="Patton Family Budget",
-    page_icon='💸',
-    layout='wide',
-    menu_items=None
-)
 
 conn = st.connection("postgresql", type='sql')
 payments = conn.query("select * from fact_payment")
-
 
 
 ############################
@@ -171,8 +163,11 @@ def main():
         
         st.write("______________")
         
-        # Flex Spend add Widget
-        input_form()
+        ###############################
+        #   Flex Spend add Widget     #
+        ###############################
+
+        submit_updated_payment()
 
 
         st.write("______________")
