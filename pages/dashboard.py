@@ -1,3 +1,4 @@
+import os
 import yaml
 import psycopg2
 import pandas as pd
@@ -15,7 +16,12 @@ from components.kpi_cards import kpiCards
 from data.source import all_data
 
 
-conn = st.connection("postgresql", type='sql')
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+
+conn = st.connection("postgresql", type='sql', url=DATABASE_URL)
 payments = conn.query("select * from fact_payment")
 
 

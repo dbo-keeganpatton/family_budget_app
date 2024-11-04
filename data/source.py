@@ -1,13 +1,19 @@
+import os
 import pandas as pd
 import streamlit as st
 import psycopg2
 pd.set_option('future.no_silent_downcasting', True)
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+
 
 def all_data():
     
     # Database Connection
-    conn = st.connection("postgresql", type='sql')
+    conn = st.connection("postgresql", type='sql', url=DATABASE_URL)
 
     ####################################
     #         Trend Data Pull          #

@@ -1,6 +1,13 @@
+import os
 import streamlit as st
 import pandas as pd
 from sqlalchemy import text
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+
 
 st.set_page_config(
     page_title="Patton Family Budget",
@@ -8,7 +15,8 @@ st.set_page_config(
     layout='wide',
     menu_items=None
 )
-conn = st.connection("postgresql", type="sql")
+
+conn = st.connection("postgresql", type="sql", url=DATABASE_URL)
 
 
 ###############################
