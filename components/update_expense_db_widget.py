@@ -43,10 +43,23 @@ def update_payment(expense, year, month, value):
         # query to be passed as a sqlalchemy.text() object.
 
             update_sql = text("""
-                UPDATE fact_payment
-                SET value = :value,
-                    paid = TRUE
-                WHERE 
+            update fact_payment
+                set value = case 
+	                when expense in (
+		                'groceries',
+                        'gas',
+                        'cat',
+                        'savings',
+                        'flex_spend',
+                        'baby',
+                        'skate') 
+	                then value + :value
+	                else :value
+	                end,
+
+	                paid = TRUE
+                
+                where
                     expense = :expense and 
                     month = :month and
                     mod(year_month_id / 100, 10000) = :year;
@@ -100,10 +113,11 @@ def submit_updated_payment():
                     if expense_category and year_category and month_category and new_value >= 0:
                         if update_payment(expense_category, year_category, month_category, new_value):
                             st.success("Payment updated successfully!")
-                                    
+                            
+
                     else:
                         st.warning("Please complete all fields")
-        
+                        
 
 if __name__ == "__main__":
     submit_updated_payment()

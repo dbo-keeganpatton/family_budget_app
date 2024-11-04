@@ -78,15 +78,27 @@ $function$;
 #          ELT Actions             #
 ####################################
 add_expense = """
+update fact_payment
+set value = case 
+	-- These Categories will be added
+	-- To as the month progresses
+	when expense in (
+		'groceries',
+		'gas',
+		'cat',
+		'savings',
+		'flex_spend',
+		'baby',
+		'skate') 
+	then value + :value
+	else :value
+	end,
 
-UPDATE fact_payment
-SET value = :value,
 	paid = TRUE
-WHERE 
+where
 	expense = :expense and 
 	month = :month and
 	mod(year_month_id / 100, 10000) = :year;
-
 """
 
 
