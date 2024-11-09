@@ -7,7 +7,7 @@ pd.set_option('future.no_silent_downcasting', True)
 
 
 # DEV Local DB
-#DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # PROD DB 
 if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
