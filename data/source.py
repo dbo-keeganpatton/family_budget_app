@@ -14,7 +14,7 @@ if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
     DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
 
 
-
+@st.cache_data
 def all_data():
     
     # Database Connection

@@ -85,6 +85,7 @@ def update_payment(expense, year, month, value):
             )
 
             session.commit()
+            st.cache_data.clear()
             return True
 
 
