@@ -4,6 +4,7 @@ import streamlit as st
 from yaml.loader import SafeLoader
 from data.source import all_data
 import streamlit_authenticator as stauth
+from components.update_expense_db_widget import submit_updated_payment 
 
 
 
@@ -25,8 +26,13 @@ if 'authentication_status' not in st.session_state or not st.session_state['auth
     st.switch_page("./app.py")
 
 # Use this for DEV auth
-with open('./auth.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+#with open('./auth.yaml') as file:
+#    config = yaml.load(file, Loader=SafeLoader)
+
+# PROD Auth
+log_cred = os.environ.get("LOGIN_CREDENTIALS")
+config = yaml.load(log_cred, Loader=SafeLoader)
+
 
 authenticator = stauth.Authenticate(
     config['credentials'],
@@ -52,6 +58,10 @@ with st.sidebar:
             use_container_width=True
         )
         
+
+    st.write("________________")
+    
+    submit_updated_payment()
 
     st.write("________________")
 

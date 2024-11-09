@@ -4,7 +4,12 @@ import streamlit as st
 import psycopg2
 pd.set_option('future.no_silent_downcasting', True)
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
+
+
+# DEV Local DB
+#DATABASE_URL = os.getenv("DATABASE_URL")
+
+# PROD DB 
 if DATABASE_URL and DATABASE_URL.startswith('postgres://'):
     DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
 
