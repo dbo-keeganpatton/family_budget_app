@@ -4,6 +4,7 @@ import streamlit as st
 from yaml.loader import SafeLoader
 from data.source import all_data
 import streamlit_authenticator as stauth
+from components.update_expense_db_widget import submit_updated_payment 
 
 
 
@@ -33,7 +34,6 @@ log_cred = os.environ.get("LOGIN_CREDENTIALS")
 config = yaml.load(log_cred, Loader=SafeLoader)
 
 
-
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -58,6 +58,10 @@ with st.sidebar:
             use_container_width=True
         )
         
+
+    st.write("________________")
+    
+    submit_updated_payment()
 
     st.write("________________")
 

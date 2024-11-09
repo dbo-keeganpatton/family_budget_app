@@ -27,7 +27,6 @@ os.environ["STREAMLIT_CONFIG_DIR"] = "./.streamlit"
 #with open('./auth.yaml') as file:
 #    config = yaml.load(file, Loader=SafeLoader)
 
-
 # PROD Auth
 log_cred = os.environ.get("LOGIN_CREDENTIALS")
 config = yaml.load(log_cred, Loader=SafeLoader)

@@ -34,8 +34,9 @@ if 'authentication_status' not in st.session_state or not st.session_state['auth
     st.switch_page("./app.py")
 
 ### Use this for DEV auth
-#with open('./auth.yaml') as file:
+# with open('./auth.yaml') as file:
 #    config = yaml.load(file, Loader=SafeLoader)
+
 
 # PROD Auth
 log_cred = os.environ.get("LOGIN_CREDENTIALS")
@@ -119,7 +120,7 @@ water_current_month_var = find_percent_variance(water_current_month, water_avg )
 ######################################
 def main():
     
-        
+       
     #####################
     #     KPI CARDS     #
     #####################

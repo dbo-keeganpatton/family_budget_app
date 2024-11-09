@@ -27,6 +27,10 @@
 
 - New Visual
     - Visual to show remaining balance from monthly income.
+    - List of Unpaid Bills that decrements as bills are paid.
+
+- Quality of Life
+    - Login Persistance. Login persists for period of time through refreshes.
 
 - Database Update
     - Create separate Flex Spend table with details for each flex spend entry linked to fact_payment.
@@ -53,6 +57,3 @@
 
 - ~~Authentication~~
     - ~~Login~~
-
-
-
