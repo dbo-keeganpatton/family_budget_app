@@ -6,3 +6,4 @@ secret_base64.txt
 **.db
 **secrets.toml
 **.csv
+*plaid_test.py

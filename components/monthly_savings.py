@@ -3,7 +3,7 @@ import streamlit as st
 def monthlySavingsDonut(data, height):
     
     total_value = sum(data['value'])
-    saved_value = sum(data[data['category']=="saved"]['value'])
+    saved_value = sum(data[data['category']=="savings"]['value'])
     saved_percentage = round( (saved_value / total_value) * 100, 0)
 
     with st.container(height=height):
@@ -22,7 +22,7 @@ def monthlySavingsDonut(data, height):
                                 "field": "category",
                                 "type": "nominal",
                                 "scale": {
-                                    "domain": ["saved", "goal"],
+                                    "domain": ["savings", "goal"],
                                     "range": ["#7DEFA1", "#C02F35"]
                                 },
                                 "legend": False
